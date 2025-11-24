@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mermaid 测试页面</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            border-bottom: 3px solid #4CAF50;
+            padding-bottom: 10px;
+        }
+        .diagram-box {
+            margin: 30px 0;
+            padding: 20px;
+            background: #f9f9f9;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+        }
+        .status {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+        .success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .mermaid {
+            background: white;
+            padding: 20px;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧪 Mermaid.js 图表渲染测试</h1>
+        
+        <div id="status" class="status">
+            ⏳ 正在加载 Mermaid.js...
+        </div>
+
+        <p>如果下面能看到漂亮的图表（方框、箭头、文字），说明 Mermaid 工作正常。</p>
+        <p>如果只看到代码文本，说明 Mermaid 没有正常加载或渲染。</p>
+
+        <div class="diagram-box">
+            <h2>测试1：简单流程图</h2>
+            <div class="mermaid">
+flowchart LR
+    A[开始] --> B{判断}
+    B -->|是| C[成功]
+    B -->|否| D[失败]
+    C --> E[结束]
+    D --> E
+            </div>
+        </div>
+
+        <div class="diagram-box">
+            <h2>测试2：类图</h2>
+            <div class="mermaid">
+classDiagram
+    class Animal {
+        +String name
+        +int age
+        +makeSound()
+    }
+    class Dog {
+        +String breed
+        +bark()
+    }
+    class Cat {
+        +String color
+        +meow()
+    }
+    Animal <|-- Dog
+    Animal <|-- Cat
+            </div>
+        </div>
+
+        <div class="diagram-box">
+            <h2>测试3：状态图</h2>
+            <div class="mermaid">
+stateDiagram-v2
+    [*] --> 待处理
+    待处理 --> 进行中: 开始
+    进行中 --> 已完成: 完成
+    进行中 --> 已取消: 取消
+    已完成 --> [*]
+    已取消 --> [*]
+            </div>
+        </div>
+
+        <hr style="margin: 30px 0;">
+        
+        <h3>📝 说明</h3>
+        <ul>
+            <li><strong>如果能看到图表</strong>：Mermaid 工作正常，主页面的图表也应该能正常显示</li>
+            <li><strong>如果看不到图表</strong>：可能是网络问题、CDN被墙、或浏览器不兼容</li>
+            <li><strong>解决方案</strong>：
+                <ul>
+                    <li>尝试刷新页面（Ctrl+F5 强制刷新）</li>
+                    <li>检查浏览器控制台（F12）是否有错误信息</li>
+                    <li>尝试其他浏览器（Chrome、Edge推荐）</li>
+                    <li>检查网络连接</li>
+                </ul>
+            </li>
+        </ul>
+
+        <div style="margin-top: 30px;">
+            <a href="diagram.html" style="display: inline-block; padding: 10px 20px; background: #4CAF50; color: white; text-decoration: none; border-radius: 5px;">
+                ← 返回完整设计图页面
+            </a>
+        </div>
+    </div>
+
+    <!-- 引入 Mermaid.js - 多个CDN备选 -->
+    <script src="https://unpkg.com/mermaid@10.6.1/dist/mermaid.min.js" 
+            onerror="loadBackupMermaid()"></script>
+
+    <script>
+        let mermaidLoaded = false;
+        const statusDiv = document.getElementById('status');
+
+        // 备用CDN加载函数
+        function loadBackupMermaid() {
+            console.log('主CDN失败，尝试备用CDN...');
+            const script = document.createElement('script');
+            script.src = 'https://cdn.jsdelivr.net/npm/mermaid@10.6.1/dist/mermaid.min.js';
+            script.onerror = function() {
+                statusDiv.className = 'status error';
+                statusDiv.innerHTML = '❌ Mermaid.js 加载失败！可能是网络问题或CDN被墙。';
+            };
+            script.onload = initMermaid;
+            document.head.appendChild(script);
+        }
+
+        // 初始化 Mermaid
+        function initMermaid() {
+            try {
+                mermaid.initialize({ 
+                    startOnLoad: true,
+                    theme: 'default',
+                    securityLevel: 'loose',
+                    themeVariables: {
+                        // 类图配置 - 高对比度
+                        primaryColor: '#E3F2FD',        // 浅蓝色背景
+                        primaryTextColor: '#000000',    // 黑色文字
+                        primaryBorderColor: '#1976D2',  // 深蓝色边框
+                        classText: '#000000',           // 类名文字：黑色
+                        
+                        // 其他配置
+                        lineColor: '#424242',           // 连线：深灰
+                        textColor: '#000000',           // 通用文字：黑色
+                        mainBkg: '#E3F2FD',            // 主背景
+                        nodeBorder: '#1976D2',
+                        
+                        // 注释
+                        noteBkgColor: '#FFF59D',
+                        noteTextColor: '#000000',
+                        noteBorderColor: '#F57C00'
+                    },
+                    flowchart: {
+                        useMaxWidth: true,
+                        htmlLabels: true
+                    },
+                    class: {
+                        useMaxWidth: true
+                    }
+                });
+                
+                mermaidLoaded = true;
+                statusDiv.className = 'status success';
+                statusDiv.innerHTML = '✅ Mermaid.js 加载成功！如果下面能看到图表，说明一切正常。';
+                
+                // 手动触发渲染
+                setTimeout(() => {
+                    mermaid.contentLoaded();
+                }, 100);
+            } catch(e) {
+                statusDiv.className = 'status error';
+                statusDiv.innerHTML = '❌ Mermaid 初始化失败: ' + e.message;
+                console.error('Mermaid init error:', e);
+            }
+        }
+
+        // 页面加载完成后初始化
+        if (typeof mermaid !== 'undefined') {
+            window.addEventListener('DOMContentLoaded', initMermaid);
+        } else {
+            setTimeout(() => {
+                if (typeof mermaid === 'undefined') {
+                    statusDiv.className = 'status error';
+                    statusDiv.innerHTML = '❌ Mermaid.js 未加载！请检查网络连接。';
+                }
+            }, 3000);
+        }
+    </script>
+</body>
+</html>
